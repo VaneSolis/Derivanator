@@ -20,6 +20,7 @@
             <div class="nav-links">
                 <a href="#" id="loginLink">Iniciar Sesión</a>
                 <a href="#" id="registerLink">Registrarse</a>
+                <button onclick="logout()" id="logoutButton" class="btn-secondary" style="display: none;">Cerrar Sesión</button>
             </div>
             <div class="logo">
                 <h1>Derivanator <i class="fas fa-cat"></i></h1>
@@ -41,17 +42,33 @@
                         <li><i class="fas fa-calculator"></i> Ingeniería: Optimización de sistemas</li>
                         <li><i class="fas fa-chart-line"></i> Economía: Análisis de costos y beneficios</li>
                     </ul>
-                    <p>Con nuestra plataforma interactiva, podrás:</p>
-                    <ul class="features-list">
-                        <li><i class="fas fa-book"></i> Aprender las reglas fundamentales de derivación</li>
-                        <li><i class="fas fa-pencil-alt"></i> Practicar con ejercicios interactivos</li>
-                        <li><i class="fas fa-check-circle"></i> Verificar tus soluciones en tiempo real</li>
-                    </ul>
                 </div>
                 <div class="intro-formula">
                     <p>\[ \frac{d}{dx}[f(x)] = \lim_{h \to 0} \frac{f(x + h) - f(x)}{h} \]</p>
                     <p class="formula-caption">Definición formal de la derivada</p>
                 </div>
+            </div>
+        </section>
+
+        <!-- Sección ¿Qué quieres hacer? -->
+        <section id="what-to-do" class="what-to-do-section">
+            <h2>¿Qué quieres hacer?</h2>
+            <div class="options-description">
+                <a href="aprender.html" class="option-card">
+                    <i class="fas fa-book-open"></i>
+                    <h3>Aprender</h3>
+                    <p>Explora las reglas de derivación con ejemplos paso a paso.</p>
+                </a>
+                <a href="practicar.html" class="option-card">
+                    <i class="fas fa-pencil-ruler"></i>
+                    <h3>Practicar</h3>
+                    <p>Pon a prueba tus conocimientos con ejercicios interactivos.</p>
+                </a>
+                <a href="extras.html" class="option-card">
+                    <i class="fas fa-star"></i>
+                    <h3>Extras</h3>
+                    <p>Descubre recursos adicionales y herramientas útiles.</p>
+                </a>
             </div>
         </section>
 
@@ -96,195 +113,6 @@
                 </form>
             </div>
         </div>
-
-        <!-- Contenido Educativo -->
-        <section id="educational-content" style="display: none;">
-            <div class="header-actions">
-                <button onclick="logout()" class="btn-secondary">Cerrar Sesión</button>
-            </div>
-
-            <h2>Reglas de Derivación</h2>
-            
-            <!-- Regla de la Cadena -->
-            <div class="rule-section">
-                <h3>Regla de la Cadena</h3>
-                <div class="example">
-                    <h4>Ejemplo:</h4>
-                    <p>Si \( f(x) = (x^2 + 1)^3 \), entonces:</p>
-                    <p>\[ f'(x) = 3(x^2 + 1)^2 \cdot 2x \]</p>
-                    <div class="solution-steps">
-                        <div class="step-content active">
-                            <h5>Paso 1: Identificar la función exterior</h5>
-                            <p>La función exterior es \( u^3 \)</p>
-                        </div>
-                        <div class="step-content">
-                            <h5>Paso 2: Identificar la función interior</h5>
-                            <p>La función interior es \( x^2 + 1 \)</p>
-                        </div>
-                        <div class="step-content">
-                            <h5>Paso 3: Derivar la función exterior</h5>
-                            <p>La derivada de \( u^3 \) es \( 3u^2 \)</p>
-                        </div>
-                        <div class="step-content">
-                            <h5>Paso 4: Derivar la función interior</h5>
-                            <p>La derivada de \( x^2 + 1 \) es \( 2x \)</p>
-                        </div>
-                        <div class="step-content">
-                            <h5>Paso 5: Aplicar la regla de la cadena</h5>
-                            <p>Multiplicamos las derivadas: \( 3(x^2 + 1)^2 \cdot 2x \)</p>
-                        </div>
-                    </div>
-                    <div class="step-navigation">
-                        <button class="nav-btn prev-step" disabled><i class="fas fa-arrow-left"></i></button>
-                        <div class="step-indicator">
-                            <span class="step active"></span>
-                            <span class="step"></span>
-                            <span class="step"></span>
-                            <span class="step"></span>
-                            <span class="step"></span>
-                        </div>
-                        <button class="nav-btn next-step"><i class="fas fa-arrow-right"></i></button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Regla del Cociente -->
-            <div class="rule-section">
-                <h3>Regla del Cociente</h3>
-                <div class="example">
-                    <h4>Ejemplo:</h4>
-                    <p>Si \( f(x) = \frac{x^2}{x + 1} \), entonces:</p>
-                    <p>\[ f'(x) = \frac{2x(x + 1) - x^2(1)}{(x + 1)^2} \]</p>
-                    <div class="solution-steps">
-                        <div class="step-content active">
-                            <h5>Paso 1: Identificar las funciones</h5>
-                            <p>Identificamos \( f(x) = x^2 \) y \( g(x) = x + 1 \)</p>
-                        </div>
-                        <div class="step-content">
-                            <h5>Paso 2: Derivar la función del numerador</h5>
-                            <p>La derivada de \( f(x) = x^2 \) es \( f'(x) = 2x \)</p>
-                        </div>
-                        <div class="step-content">
-                            <h5>Paso 3: Derivar la función del denominador</h5>
-                            <p>La derivada de \( g(x) = x + 1 \) es \( g'(x) = 1 \)</p>
-                        </div>
-                        <div class="step-content">
-                            <h5>Paso 4: Aplicar la regla del cociente</h5>
-                            <p>Multiplicamos y restamos: \( \frac{2x(x + 1) - x^2(1)}{(x + 1)^2} \)</p>
-                        </div>
-                    </div>
-                    <div class="step-navigation">
-                        <button class="nav-btn prev-step" disabled><i class="fas fa-arrow-left"></i></button>
-                        <div class="step-indicator">
-                            <span class="step active"></span>
-                            <span class="step"></span>
-                            <span class="step"></span>
-                            <span class="step"></span>
-                        </div>
-                        <button class="nav-btn next-step"><i class="fas fa-arrow-right"></i></button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Regla del Producto -->
-            <div class="rule-section">
-                <h3>Regla del Producto</h3>
-                <div class="example">
-                    <h4>Ejemplo:</h4>
-                    <p>Si \( f(x) = x^2 \cdot \sin(x) \), entonces:</p>
-                    <p>\[ f'(x) = 2x \cdot \sin(x) + x^2 \cdot \cos(x) \]</p>
-                    <div class="solution-steps">
-                        <div class="step-content active">
-                            <h5>Paso 1: Identificar las funciones</h5>
-                            <p>Identificamos \( f(x) = x^2 \) y \( g(x) = \sin(x) \)</p>
-                        </div>
-                        <div class="step-content">
-                            <h5>Paso 2: Derivar la primera función</h5>
-                            <p>La derivada de \( f(x) = x^2 \) es \( f'(x) = 2x \)</p>
-                        </div>
-                        <div class="step-content">
-                            <h5>Paso 3: Derivar la segunda función</h5>
-                            <p>La derivada de \( g(x) = \sin(x) \) es \( g'(x) = \cos(x) \)</p>
-                        </div>
-                        <div class="step-content">
-                            <h5>Paso 4: Aplicar la regla del producto</h5>
-                            <p>Sumamos los productos: \( 2x \cdot \sin(x) + x^2 \cdot \cos(x) \)</p>
-                        </div>
-                    </div>
-                    <div class="step-navigation">
-                        <button class="nav-btn prev-step" disabled><i class="fas fa-arrow-left"></i></button>
-                        <div class="step-indicator">
-                            <span class="step active"></span>
-                            <span class="step"></span>
-                            <span class="step"></span>
-                            <span class="step"></span>
-                        </div>
-                        <button class="nav-btn next-step"><i class="fas fa-arrow-right"></i></button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sección de Ejercicios -->
-            <div class="exercises">
-                <h3>Ejercicios Prácticos</h3>
-                <div class="exercise">
-                    <p>1. Deriva la función: \( f(x) = (x^3 + 2x)^2 \)</p>
-                    <div class="input-group">
-                        <input type="text" class="exercise-input" placeholder="Escribe tu respuesta">
-                    </div>
-                    <div class="attempts-counter">
-                        Intentos restantes: <span id="attemptsCount">3</span>
-                    </div>
-                    <div class="virtual-keyboard">
-                        <div class="keyboard-row">
-                            <button class="key">7</button>
-                            <button class="key">8</button>
-                            <button class="key">9</button>
-                            <button class="key">/</button>
-                            <button class="key">(</button>
-                            <button class="key">)</button>
-                            <button class="key">'</button>
-                        </div>
-                        <div class="keyboard-row">
-                            <button class="key">4</button>
-                            <button class="key">5</button>
-                            <button class="key">6</button>
-                            <button class="key">*</button>
-                            <button class="key">x</button>
-                            <button class="key">^</button>
-                            <button class="key">f</button>
-                        </div>
-                        <div class="keyboard-row">
-                            <button class="key">1</button>
-                            <button class="key">2</button>
-                            <button class="key">3</button>
-                            <button class="key">-</button>
-                            <button class="key">+</button>
-                            <button class="key">.</button>
-                        </div>
-                        <div class="keyboard-row">
-                            <button class="key">0</button>
-                            <button class="key">C</button>
-                            <button class="key">←</button>
-                            <button class="key">=</button>
-                        </div>
-                    </div>
-                    <button class="check-answer">Verificar Respuesta</button>
-                    <div class="exercise-solution" style="display: none;">
-                        <p>La solución es: f'(x)=6x^5+16x^3+8x</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Sección de Recursos -->
-        <section id="resources">
-            <h2>Recursos Adicionales</h2>
-            <ul>
-                <li><a href="https://es.wikipedia.org/wiki/Derivada" target="_blank">Wikipedia: Derivada</a></li>
-                <li><a href="https://www.khanacademy.org/math/calculus-1/cs1-derivatives" target="_blank">Khan Academy: Derivadas</a></li>
-            </ul>
-        </section>
     </main>
 
     <!-- Scripts -->

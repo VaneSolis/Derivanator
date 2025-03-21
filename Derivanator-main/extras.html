@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Derivanator - Extras</title>
+    
+    <!-- Estilos -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Scripts de Matemáticas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <!-- Encabezado -->
+    <header>
+        <nav class="nav-menu">
+            <div class="nav-links">
+                <a href="#" id="loginLink">Iniciar Sesión</a>
+                <a href="#" id="registerLink">Registrarse</a>
+            </div>
+            <div class="logo">
+                <h1>Derivanator <i class="fas fa-cat"></i></h1>
+                <a href="index.html" class="home-link"><i class="fas fa-home"></i> Inicio</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main>
+        <section id="extras-content">
+            <h2>Recursos Adicionales</h2>
+            
+            <!-- Tabla de Derivadas Comunes -->
+            <div class="extras-section">
+                <h3><i class="fas fa-table"></i> Tabla de Derivadas Comunes</h3>
+                <div class="common-derivatives">
+                    <div class="derivative-card">
+                        <p>Función: \( f(x) = x^n \)</p>
+                        <p>Derivada: \( f'(x) = nx^{n-1} \)</p>
+                    </div>
+                    <div class="derivative-card">
+                        <p>Función: \( f(x) = e^x \)</p>
+                        <p>Derivada: \( f'(x) = e^x \)</p>
+                    </div>
+                    <div class="derivative-card">
+                        <p>Función: \( f(x) = \ln(x) \)</p>
+                        <p>Derivada: \( f'(x) = \frac{1}{x} \)</p>
+                    </div>
+                    <div class="derivative-card">
+                        <p>Función: \( f(x) = \sin(x) \)</p>
+                        <p>Derivada: \( f'(x) = \cos(x) \)</p>
+                    </div>
+                    <div class="derivative-card">
+                        <p>Función: \( f(x) = \cos(x) \)</p>
+                        <p>Derivada: \( f'(x) = -\sin(x) \)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enlaces Útiles -->
+            <div class="extras-section">
+                <h3><i class="fas fa-link"></i> Enlaces Útiles</h3>
+                <div class="useful-links">
+                    <a href="https://www.wolframalpha.com/calculators/derivative-calculator" target="_blank" class="resource-link">
+                        <i class="fas fa-calculator"></i>
+                        <span>Calculadora de Derivadas - Wolfram Alpha</span>
+                    </a>
+                    <a href="https://www.geogebra.org/" target="_blank" class="resource-link">
+                        <i class="fas fa-chart-line"></i>
+                        <span>GeoGebra - Visualización de Funciones</span>
+                    </a>
+                    <a href="https://www.khanacademy.org/math/calculus-1/cs1-derivatives-definition-and-basic-rules" target="_blank" class="resource-link">
+                        <i class="fas fa-video"></i>
+                        <span>Khan Academy - Curso de Cálculo</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Consejos y Trucos -->
+            <div class="extras-section">
+                <h3><i class="fas fa-lightbulb"></i> Consejos y Trucos</h3>
+                <div class="tips-container">
+                    <div class="tip-card">
+                        <h4>Verificación Rápida</h4>
+                        <p>Si tu derivada es correcta, al integrarla deberías obtener la función original (más una constante).</p>
+                    </div>
+                    <div class="tip-card">
+                        <h4>Simplificación</h4>
+                        <p>Siempre intenta simplificar tu respuesta final para facilitar su comprensión y reducir errores.</p>
+                    </div>
+                    <div class="tip-card">
+                        <h4>Práctica Mental</h4>
+                        <p>Intenta derivar funciones simples mentalmente para desarrollar intuición matemática.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html> 

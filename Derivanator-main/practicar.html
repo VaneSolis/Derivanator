@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Derivanator - Práctica</title>
+    
+    <!-- Estilos -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Scripts de Matemáticas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <!-- Encabezado -->
+    <header>
+        <nav class="nav-menu">
+            <div class="nav-links">
+                <a href="#" id="loginLink">Iniciar Sesión</a>
+                <a href="#" id="registerLink">Registrarse</a>
+            </div>
+            <div class="logo">
+                <h1>Derivanator <i class="fas fa-cat"></i></h1>
+                <a href="index.html" class="home-link"><i class="fas fa-home"></i> Inicio</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main>
+        <section id="practice-content">
+            <h2>Ejercicios de Práctica</h2>
+            
+            <!-- Ejercicio 1 -->
+            <div class="exercise-section">
+                <h3>Ejercicio 1: Regla de la Cadena</h3>
+                <div class="exercise">
+                    <p>Deriva la función: \( f(x) = (x^3 + 2x)^2 \)</p>
+                    <div class="input-group">
+                        <input type="text" class="exercise-input" placeholder="Escribe tu respuesta">
+                    </div>
+                    <div class="attempts-counter">
+                        Intentos restantes: <span id="attemptsCount">3</span>
+                    </div>
+                    <div class="virtual-keyboard">
+                        <div class="keyboard-row">
+                            <button class="key">7</button>
+                            <button class="key">8</button>
+                            <button class="key">9</button>
+                            <button class="key">/</button>
+                            <button class="key">(</button>
+                            <button class="key">)</button>
+                            <button class="key">'</button>
+                        </div>
+                        <div class="keyboard-row">
+                            <button class="key">4</button>
+                            <button class="key">5</button>
+                            <button class="key">6</button>
+                            <button class="key">*</button>
+                            <button class="key">x</button>
+                            <button class="key">^</button>
+                            <button class="key">f</button>
+                        </div>
+                        <div class="keyboard-row">
+                            <button class="key">1</button>
+                            <button class="key">2</button>
+                            <button class="key">3</button>
+                            <button class="key">-</button>
+                            <button class="key">+</button>
+                            <button class="key">.</button>
+                        </div>
+                        <div class="keyboard-row">
+                            <button class="key">0</button>
+                            <button class="key">C</button>
+                            <button class="key">←</button>
+                            <button class="key">=</button>
+                        </div>
+                    </div>
+                    <button class="check-answer">Verificar Respuesta</button>
+                    <div class="exercise-solution" style="display: none;">
+                        <p>La solución es: \( f'(x) = 2(x^3 + 2x)(3x^2 + 2) \)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ejercicio 2 -->
+            <div class="exercise-section">
+                <h3>Ejercicio 2: Regla del Producto</h3>
+                <div class="exercise">
+                    <p>Deriva la función: \( f(x) = x^2 \cdot e^x \)</p>
+                    <div class="input-group">
+                        <input type="text" class="exercise-input" placeholder="Escribe tu respuesta">
+                    </div>
+                    <div class="attempts-counter">
+                        Intentos restantes: <span id="attemptsCount2">3</span>
+                    </div>
+                    <div class="virtual-keyboard">
+                        <div class="keyboard-row">
+                            <button class="key">7</button>
+                            <button class="key">8</button>
+                            <button class="key">9</button>
+                            <button class="key">/</button>
+                            <button class="key">(</button>
+                            <button class="key">)</button>
+                            <button class="key">e</button>
+                        </div>
+                        <div class="keyboard-row">
+                            <button class="key">4</button>
+                            <button class="key">5</button>
+                            <button class="key">6</button>
+                            <button class="key">*</button>
+                            <button class="key">x</button>
+                            <button class="key">^</button>
+                            <button class="key">f</button>
+                        </div>
+                        <div class="keyboard-row">
+                            <button class="key">1</button>
+                            <button class="key">2</button>
+                            <button class="key">3</button>
+                            <button class="key">-</button>
+                            <button class="key">+</button>
+                            <button class="key">.</button>
+                        </div>
+                        <div class="keyboard-row">
+                            <button class="key">0</button>
+                            <button class="key">C</button>
+                            <button class="key">←</button>
+                            <button class="key">=</button>
+                        </div>
+                    </div>
+                    <button class="check-answer">Verificar Respuesta</button>
+                    <div class="exercise-solution" style="display: none;">
+                        <p>La solución es: \( f'(x) = 2x \cdot e^x + x^2 \cdot e^x \)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html> 
