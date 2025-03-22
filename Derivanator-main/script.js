@@ -90,36 +90,50 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Función para actualizar la interfaz de autenticación
+    // Funciones globales de autenticación
+    function clearUserSession() {
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('sessionTimestamp');
+        localStorage.removeItem('lastActive');
+    }
+
     function updateAuthUI(isLoggedIn) {
         const loginLink = document.getElementById('loginLink');
         const registerLink = document.getElementById('registerLink');
         const logoutButton = document.getElementById('logoutButton');
 
         if (isLoggedIn) {
-            loginLink.style.display = 'none';
-            registerLink.style.display = 'none';
-            logoutButton.style.display = 'block';
+            if (loginLink) loginLink.style.display = 'none';
+            if (registerLink) registerLink.style.display = 'none';
+            if (logoutButton) logoutButton.style.display = 'block';
         } else {
-            loginLink.style.display = 'block';
-            registerLink.style.display = 'block';
-            logoutButton.style.display = 'none';
+            if (loginLink) loginLink.style.display = 'block';
+            if (registerLink) registerLink.style.display = 'block';
+            if (logoutButton) logoutButton.style.display = 'none';
         }
     }
 
-    // Función para cerrar sesión
     function logout() {
         clearUserSession();
         updateAuthUI(false);
         console.log('Sesión cerrada');
+        // Redirigir a la página principal
+        window.location.href = 'index.html';
+    }
+
+    function checkUserSession() {
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        if (isLoggedIn) {
+            updateAuthUI(true);
+        } else {
+            updateAuthUI(false);
+        }
+        return isLoggedIn;
     }
 
     // Verificar sesión al cargar la página
-    if (checkUserSession()) {
-        updateAuthUI(true);
-    } else {
-        updateAuthUI(false);
-    }
+    checkUserSession();
 
     // Verificar si localStorage está disponible
     if (typeof(Storage) !== "undefined") {
@@ -236,40 +250,6 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('sessionTimestamp', new Date().getTime().toString());
         localStorage.setItem('lastActive', new Date().getTime().toString());
-    }
-
-    function clearUserSession() {
-        localStorage.removeItem('currentUser');
-        localStorage.removeItem('isLoggedIn');
-        localStorage.removeItem('sessionTimestamp');
-        localStorage.removeItem('lastActive');
-    }
-
-    function checkUserSession() {
-        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        const sessionTimestamp = localStorage.getItem('sessionTimestamp');
-        const lastActive = localStorage.getItem('lastActive');
-        
-        if (isLoggedIn && currentUser && sessionTimestamp) {
-            // Verificar si la sesión es válida (menos de 24 horas)
-            const currentTime = new Date().getTime();
-            const sessionAge = currentTime - parseInt(sessionTimestamp);
-            const maxSessionAge = 24 * 60 * 60 * 1000; // 24 horas en milisegundos
-
-            if (sessionAge < maxSessionAge) {
-                // Actualizar último tiempo activo
-                localStorage.setItem('lastActive', currentTime.toString());
-                
-                // Solo mostrar contenido educativo
-                document.getElementById('educational-content').style.display = 'block';
-                return true;
-            } else {
-                // Si la sesión es muy antigua, la limpiamos
-                clearUserSession();
-            }
-        }
-        return false;
     }
 
     // Manejar inicio de sesión
