@@ -1,0 +1,23 @@
+# Configuración para servir archivos HTML correctamente
+AddType text/html .html
+AddType text/css .css
+AddType application/javascript .js
+
+# Forzar la descarga de archivos HTML en lugar de mostrarlos como directorios
+Options -Indexes
+
+# Establecer el archivo index.html como página por defecto
+DirectoryIndex index.html
+
+# Permitir el acceso a los archivos
+<FilesMatch "\.(html|css|js)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Configurar el tipo MIME correcto
+<IfModule mod_mime.c>
+    AddType text/html .html
+    AddType text/css .css
+    AddType application/javascript .js
+</IfModule> 
