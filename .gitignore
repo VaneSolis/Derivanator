@@ -1,17 +1,14 @@
-# Archivos del sistema
+# Dependencias y archivos del sistema
+node_modules/
 .DS_Store
 Thumbs.db
-
-# Dependencias
-node_modules/
-vendor/
 
 # Archivos de entorno
 .env
 .env.local
 .env.*.local
 
-# Archivos de IDE
+# Archivos de IDE/editores
 .idea/
 .vscode/
 *.sublime-project
@@ -24,5 +21,5 @@ yarn-debug.log*
 yarn-error.log*
 
 # Archivos de construcción
-dist/
-build/ 
+/dist
+/build 
