@@ -117,12 +117,14 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('UI actualizada:', isLoggedIn ? 'usuario logueado' : 'usuario no logueado');
     }
 
-    function logout() {
+    // Función global de logout
+    window.logout = function() {
+        console.log('Función logout llamada');
         clearUserSession();
         updateAuthUI(false);
-        console.log('Sesión cerrada');
-        // No redirigimos, solo actualizamos la UI
-    }
+        // Forzar recarga de la página para asegurar que todo se actualice
+        window.location.reload();
+    };
 
     function checkUserSession() {
         const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
