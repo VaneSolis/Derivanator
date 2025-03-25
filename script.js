@@ -96,6 +96,8 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem('isLoggedIn');
         localStorage.removeItem('sessionTimestamp');
         localStorage.removeItem('lastActive');
+        localStorage.removeItem('activeSession');
+        console.log('Sesión limpiada correctamente');
     }
 
     function updateAuthUI(isLoggedIn) {
@@ -112,23 +114,28 @@ document.addEventListener('DOMContentLoaded', () => {
             if (registerLink) registerLink.style.display = 'block';
             if (logoutButton) logoutButton.style.display = 'none';
         }
+        console.log('UI actualizada:', isLoggedIn ? 'usuario logueado' : 'usuario no logueado');
     }
 
     function logout() {
         clearUserSession();
         updateAuthUI(false);
         console.log('Sesión cerrada');
-        // Redirigir a la página principal
-        window.location.href = 'index.html';
+        // No redirigimos, solo actualizamos la UI
     }
 
     function checkUserSession() {
         const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-        if (isLoggedIn) {
-            updateAuthUI(true);
-        } else {
+        const currentUser = localStorage.getItem('currentUser');
+        
+        // Si no hay usuario pero está marcado como logueado, limpiamos la sesión
+        if (isLoggedIn && !currentUser) {
+            clearUserSession();
             updateAuthUI(false);
+            return false;
         }
+        
+        updateAuthUI(isLoggedIn);
         return isLoggedIn;
     }
 
