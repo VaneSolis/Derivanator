@@ -11,9 +11,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Si el usuario está logueado y estamos en la página de ejercicios, mostrar el primer ejercicio
     const exerciseContainer = document.querySelector('.exercise-container');
+    const loginMessage = document.getElementById('login-message');
+    
     if (isLoggedIn && exerciseContainer) {
         console.log('Usuario logueado y en página de ejercicios, mostrando ejercicios...');
         exerciseContainer.style.display = 'block';
+        if (loginMessage) loginMessage.style.display = 'none';
+        
         if (!exerciseContainer.querySelector('.exercise')) {
             console.log('Creando primer ejercicio...');
             const firstExercise = createNewExercise(1);
@@ -27,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (exerciseContainer) {
         console.log('Usuario no logueado, ocultando ejercicios');
         exerciseContainer.style.display = 'none';
+        if (loginMessage) loginMessage.style.display = 'block';
     }
     
     const loginForm = document.getElementById('loginForm');
@@ -131,6 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const registerLink = document.getElementById('registerLink');
         const logoutButton = document.getElementById('logoutButton');
         const exerciseContainer = document.querySelector('.exercise-container');
+        const loginMessage = document.getElementById('login-message');
 
         console.log('Actualizando UI de autenticación:', isLoggedIn);
 
@@ -143,6 +149,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Si estamos en la página de ejercicios
             if (exerciseContainer) {
                 exerciseContainer.style.display = 'block';
+                if (loginMessage) loginMessage.style.display = 'none';
+                
                 if (!exerciseContainer.querySelector('.exercise')) {
                     console.log('Creando primer ejercicio desde updateAuthUI...');
                     const firstExercise = createNewExercise(1);
@@ -164,6 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (exerciseContainer) {
                 exerciseContainer.style.display = 'none';
             }
+            if (loginMessage) loginMessage.style.display = 'block';
         }
     }
 

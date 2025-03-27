@@ -18,8 +18,8 @@
     <header>
         <nav class="nav-menu">
             <div class="nav-links">
-                <a href="#" id="loginLink" style="display: none;">Iniciar Sesión</a>
-                <a href="#" id="registerLink" style="display: none;">Registrarse</a>
+                <a href="#" id="loginLink">Iniciar Sesión</a>
+                <a href="#" id="registerLink">Registrarse</a>
                 <button id="logoutButton" style="display: none;" onclick="logout()">Cerrar Sesión</button>
             </div>
             <div class="logo">
@@ -35,8 +35,13 @@
             <h2>Ejercicios de Práctica</h2>
             
             <!-- Contenedor de Ejercicio -->
-            <div class="exercise-container">
+            <div class="exercise-container" style="display: none;">
                 <!-- El ejercicio se creará dinámicamente aquí -->
+            </div>
+
+            <!-- Mensaje para usuarios no autenticados -->
+            <div id="login-message" class="login-message">
+                <p>Por favor, inicia sesión para acceder a los ejercicios de práctica.</p>
             </div>
         </section>
     </main>
