@@ -1,8 +1,33 @@
+// Variables globales al inicio del archivo
+const MAX_ATTEMPTS = 3;
+let attempts = MAX_ATTEMPTS;
+
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Página cargada');
     
-    // Inicializar la navegación de pasos
-    initializeStepNavigation();
+    // Verificar sesión al cargar la página
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    console.log('Estado inicial de la sesión:', isLoggedIn);
+    
+    // Si el usuario está logueado y estamos en la página de ejercicios, mostrar el primer ejercicio
+    const exerciseContainer = document.querySelector('.exercise-container');
+    if (isLoggedIn && exerciseContainer) {
+        console.log('Usuario logueado y en página de ejercicios, mostrando ejercicios...');
+        exerciseContainer.style.display = 'block';
+        if (!exerciseContainer.querySelector('.exercise')) {
+            console.log('Creando primer ejercicio...');
+            const firstExercise = createNewExercise(1);
+            if (firstExercise) {
+                exerciseContainer.innerHTML = '';
+                exerciseContainer.appendChild(firstExercise);
+                attempts = MAX_ATTEMPTS;
+                updateAttemptsCounter();
+            }
+        }
+    } else if (exerciseContainer) {
+        console.log('Usuario no logueado, ocultando ejercicios');
+        exerciseContainer.style.display = 'none';
+    }
     
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
@@ -62,17 +87,18 @@ document.addEventListener('DOMContentLoaded', () => {
         successDiv.className = 'success-message';
         successDiv.textContent = message;
         
-        if (loginForm) {
-            const previousMessages = loginForm.querySelectorAll('.success-message, .error-message');
+        const currentExercise = document.querySelector('.exercise');
+        if (currentExercise) {
+            // Limpiar mensajes anteriores
+            const previousMessages = currentExercise.querySelectorAll('.success-message, .error-message');
             previousMessages.forEach(msg => msg.remove());
             
-            loginForm.insertBefore(successDiv, loginForm.firstChild);
-            
-            if (message === '¡Inicio de sesión exitoso!') {
-                setTimeout(() => {
-                    hideModal(loginModal);
-                    showEducationalContent();
-                }, 1500);
+            // Insertar el nuevo mensaje antes del input
+            const inputGroup = currentExercise.querySelector('.input-group');
+            if (inputGroup) {
+                currentExercise.insertBefore(successDiv, inputGroup);
+            } else {
+                currentExercise.appendChild(successDiv);
             }
         }
     }
@@ -104,34 +130,39 @@ document.addEventListener('DOMContentLoaded', () => {
         const loginLink = document.getElementById('loginLink');
         const registerLink = document.getElementById('registerLink');
         const logoutButton = document.getElementById('logoutButton');
+        const exerciseContainer = document.querySelector('.exercise-container');
 
         console.log('Actualizando UI de autenticación:', isLoggedIn);
 
         if (isLoggedIn) {
-            if (loginLink) {
-                loginLink.style.display = 'none';
-                console.log('Ocultando botón de inicio de sesión');
-            }
-            if (registerLink) {
-                registerLink.style.display = 'none';
-                console.log('Ocultando botón de registro');
-            }
-            if (logoutButton) {
-                logoutButton.style.display = 'block';
-                console.log('Mostrando botón de cierre de sesión');
+            // Ocultar botones de login/registro y mostrar logout
+            if (loginLink) loginLink.style.display = 'none';
+            if (registerLink) registerLink.style.display = 'none';
+            if (logoutButton) logoutButton.style.display = 'block';
+            
+            // Si estamos en la página de ejercicios
+            if (exerciseContainer) {
+                exerciseContainer.style.display = 'block';
+                if (!exerciseContainer.querySelector('.exercise')) {
+                    console.log('Creando primer ejercicio desde updateAuthUI...');
+                    const firstExercise = createNewExercise(1);
+                    if (firstExercise) {
+                        exerciseContainer.innerHTML = '';
+                        exerciseContainer.appendChild(firstExercise);
+                        attempts = MAX_ATTEMPTS;
+                        updateAttemptsCounter();
+                    }
+                }
             }
         } else {
-            if (loginLink) {
-                loginLink.style.display = 'block';
-                console.log('Mostrando botón de inicio de sesión');
-            }
-            if (registerLink) {
-                registerLink.style.display = 'block';
-                console.log('Mostrando botón de registro');
-            }
-            if (logoutButton) {
-                logoutButton.style.display = 'none';
-                console.log('Ocultando botón de cierre de sesión');
+            // Mostrar botones de login/registro y ocultar logout
+            if (loginLink) loginLink.style.display = 'block';
+            if (registerLink) registerLink.style.display = 'block';
+            if (logoutButton) logoutButton.style.display = 'none';
+            
+            // Si estamos en la página de ejercicios, ocultar el contenedor
+            if (exerciseContainer) {
+                exerciseContainer.style.display = 'none';
             }
         }
     }
@@ -149,6 +180,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
         const currentUser = localStorage.getItem('currentUser');
         
+        console.log('Verificando sesión:', { isLoggedIn, currentUser });
+        
         // Si no hay usuario pero está marcado como logueado, limpiamos la sesión
         if (isLoggedIn && !currentUser) {
             clearUserSession();
@@ -156,13 +189,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return false;
         }
         
+        // Actualizar la UI basada en el estado de la sesión
         updateAuthUI(isLoggedIn);
         return isLoggedIn;
     }
-
-    // Verificar sesión al cargar la página
-    const isLoggedIn = checkUserSession();
-    console.log('Estado de sesión al cargar:', isLoggedIn);
 
     // Verificar si localStorage está disponible
     if (typeof(Storage) !== "undefined") {
@@ -188,12 +218,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Variables globales
-    let attempts = 3; // Inicializamos con 3 intentos
-    const MAX_ATTEMPTS = 3;
-
     // Función para actualizar el contador de intentos
     function updateAttemptsCounter() {
+        console.log('Actualizando contador de intentos:', attempts);
         const attemptsSpan = document.getElementById('attemptsCount');
         if (attemptsSpan) {
             attemptsSpan.textContent = attempts;
@@ -214,28 +241,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Función para mostrar mensaje de sin intentos
-    function showNoAttemptsMessage() {
-        const message = "Parece que te quedaste sin intentos, ¿comenzamos de nuevo?";
-        if (confirm(message)) {
-            resetExercise();
-        }
-    }
-
     // Función para mostrar mensajes de error
     function showError(message) {
         const errorDiv = document.createElement('div');
         errorDiv.className = 'error-message';
         errorDiv.textContent = message;
         
-        // Si estamos en el modal de login, lo insertamos ahí
-        const loginForm = document.getElementById('loginForm');
-        if (loginForm) {
+        const currentExercise = document.querySelector('.exercise');
+        if (currentExercise) {
             // Limpiar mensajes anteriores
-            const previousMessages = loginForm.querySelectorAll('.success-message, .error-message');
+            const previousMessages = currentExercise.querySelectorAll('.success-message, .error-message');
             previousMessages.forEach(msg => msg.remove());
             
-            loginForm.insertBefore(errorDiv, loginForm.firstChild);
+            // Insertar el nuevo mensaje antes del input
+            const inputGroup = currentExercise.querySelector('.input-group');
+            if (inputGroup) {
+                currentExercise.insertBefore(errorDiv, inputGroup);
+            } else {
+                currentExercise.appendChild(errorDiv);
+            }
         }
     }
 
@@ -335,7 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const password = document.getElementById('password').value;
             const rememberMe = document.getElementById('rememberMe').checked;
 
-            console.log('Intento de inicio de sesión:', { email, password });
+            console.log('Intento de inicio de sesión:', { email });
 
             // Verificar credenciales
             const users = getUsers();
@@ -349,6 +373,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     saveActiveSession(email);
                 }
                 hideModal(loginModal);
+                
+                // Actualizar UI y crear ejercicio
+                updateAuthUI(true);
+                
+                // Recargar la página después de un breve retraso
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500);
             } else {
                 console.log('Error de credenciales');
                 showError('Correo o contraseña incorrectos');
@@ -399,408 +431,321 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Manejar teclado virtual
-    document.querySelectorAll('.key').forEach(key => {
-        key.addEventListener('click', () => {
-            const input = key.closest('.exercise').querySelector('.exercise-input');
-            const value = key.textContent;
-            
-            switch(value) {
-                case 'C':
-                    input.value = '';
-                    break;
-                case '←':
-                    input.value = input.value.slice(0, -1);
-                    break;
-                case '=':
-                    checkAnswer();
-                    break;
-                default:
-                    input.value += value;
-            }
+    function initializeKeyboardEvents() {
+        console.log('Inicializando eventos del teclado virtual...');
+        
+        // Primero, remover eventos existentes
+        const existingKeys = document.querySelectorAll('.key');
+        existingKeys.forEach(key => {
+            key.replaceWith(key.cloneNode(true));
         });
-    });
+        
+        // Agregar nuevos eventos
+        const keys = document.querySelectorAll('.key');
+        console.log('Teclas encontradas:', keys.length);
+        
+        keys.forEach(key => {
+            key.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                console.log('Tecla clickeada:', this.textContent);
+                
+                const exercise = this.closest('.exercise');
+                if (!exercise) {
+                    console.error('No se encontró el ejercicio');
+                    return;
+                }
+                
+                const input = exercise.querySelector('.exercise-input');
+                if (!input) {
+                    console.error('No se encontró el input');
+                    return;
+                }
+                
+                const value = this.textContent;
+                
+                switch(value) {
+                    case 'C':
+                        input.value = '';
+                        break;
+                    case '←':
+                        input.value = input.value.slice(0, -1);
+                        break;
+                    case '=':
+                        const checkButton = exercise.querySelector('.check-answer');
+                        if (checkButton) {
+                            checkButton.click();
+                        }
+                        break;
+                    default:
+                        input.value += value;
+                }
+                
+                // Forzar el foco en el input después de cada click
+                input.focus();
+            });
+        });
+    }
 
     // Agregar evento de verificación a los botones de verificar respuesta
-    document.querySelectorAll('.check-answer').forEach(button => {
-        button.addEventListener('click', checkAnswer);
-    });
+    function initializeCheckButtons() {
+        const buttons = document.querySelectorAll('.check-answer');
+        console.log('Inicializando botones de verificación. Botones encontrados:', buttons.length);
+        
+        buttons.forEach(button => {
+            button.onclick = function() {
+                console.log('Botón de verificar clickeado');
+                checkAnswer();
+            };
+        });
+    }
 
     // Función para verificar la respuesta
     function checkAnswer() {
-        const input = document.querySelector('.exercise-input');
-        const solution = document.querySelector('.exercise-solution');
+        console.log('Función checkAnswer llamada');
         const currentExercise = document.querySelector('.exercise');
-        const answer = input.value.trim();
-        
-        // Respuestas correctas para cada ejercicio
-        const correctAnswers = {
-            1: [
-                'f\'(x) = 6x^5 + 16x^3 + 8x',
-                '6x^5 + 16x^3 + 8x',
-                'f\'(x)=6x^5+16x^3+8x',
-                '6x^5+16x^3+8x'
-            ],
-            2: [
-                'x^(3/2)', 
-                'x^3/2', 
-                'x 3/2', 
-                'x3/2', 
-                'f\'(x)=x^(3/2)',
-                'f\'(x)=x^3/2'
-            ],
-            3: [
-                'f\'(x) = 2x + 3',
-                '2x + 3',
-                'f\'(x)=2x+3',
-                '2x+3'
-            ],
-            4: [
-                'f\'(x) = 3x^2 - 2x + 1',
-                '3x^2 - 2x + 1',
-                'f\'(x)=3x^2-2x+1',
-                '3x^2-2x+1'
-            ],
-            5: [
-                'f\'(x) = 4x^3 + 6x^2 - 2x',
-                '4x^3 + 6x^2 - 2x',
-                'f\'(x)=4x^3+6x^2-2x',
-                '4x^3+6x^2-2x'
-            ],
-            6: [
-                'f\'(x) = 5x^4 - 3x^2 + 2',
-                '5x^4 - 3x^2 + 2',
-                'f\'(x)=5x^4-3x^2+2',
-                '5x^4-3x^2+2'
-            ],
-            7: [
-                'f\'(x) = 2x + 1',
-                '2x + 1',
-                'f\'(x)=2x+1',
-                '2x+1'
-            ],
-            8: [
-                'f\'(x) = 3x^2 + 2x - 1',
-                '3x^2 + 2x - 1',
-                'f\'(x)=3x^2+2x-1',
-                '3x^2+2x-1'
-            ],
-            9: [
-                'f\'(x) = 5x^4 - 4x^2 + 3x^2 - 2',
-                '5x^4 - 4x^2 + 3x^2 - 2',
-                'f\'(x)=5x^4-4x^2+3x^2-2',
-                '5x^4-4x^2+3x^2-2'
-            ],
-            10: [
-                'f\'(x) = 5x^4 + 6x^3 - 3x^2 - 2x',
-                '5x^4 + 6x^3 - 3x^2 - 2x',
-                'f\'(x)=5x^4+6x^3-3x^2-2x',
-                '5x^4+6x^3-3x^2-2x'
-            ],
-            11: [
-                'f\'(x) = 6x^5 + 12x^4 + 3x^3 - 6x',
-                '6x^5 + 12x^4 + 3x^3 - 6x',
-                'f\'(x)=6x^5+12x^4+3x^3-6x',
-                '6x^5+12x^4+3x^3-6x'
-            ],
-            12: [
-                'f\'(x) = 8x^7 - 3x^5 + 6x^3 - 2x',
-                '8x^7 - 3x^5 + 6x^3 - 2x',
-                'f\'(x)=8x^7-3x^5+6x^3-2x',
-                '8x^7-3x^5+6x^3-2x'
-            ],
-            13: [
-                'f\'(x) = 6x(x^2 + 1)^2',
-                '6x(x^2 + 1)^2',
-                'f\'(x)=6x(x^2+1)^2',
-                '6x(x^2+1)^2'
-            ],
-            14: [
-                'f\'(x) = 6x^2(x^3 - 2)',
-                '6x^2(x^3 - 2)',
-                'f\'(x)=6x^2(x^3-2)',
-                '6x^2(x^3-2)'
-            ],
-            15: [
-                'f\'(x) = 8x^3(x^4 + 3)',
-                '8x^3(x^4 + 3)',
-                'f\'(x)=8x^3(x^4+3)',
-                '8x^3(x^4+3)'
-            ],
-            16: [
-                'f\'(x) = 8x(x^2 - 1)^3',
-                '8x(x^2 - 1)^3',
-                'f\'(x)=8x(x^2-1)^3',
-                '8x(x^2-1)^3'
-            ]
-        };
+        if (!currentExercise) {
+            console.error('No se encontró el ejercicio actual');
+            return;
+        }
 
-        // Obtener el número de ejercicio actual
-        const exerciseNumber = currentExercise.querySelector('p').textContent.split('.')[0];
+        const input = currentExercise.querySelector('.exercise-input');
+        const solution = currentExercise.querySelector('.exercise-solution');
+        
+        if (!input || !solution) {
+            console.error('No se encontraron los elementos necesarios');
+            return;
+        }
+        
+        const answer = input.value.trim();
+        console.log('Respuesta ingresada:', answer);
+        
+        // Obtener el nivel actual del ejercicio
+        const levelText = currentExercise.querySelector('p').textContent;
+        const level = parseInt(levelText.split('Nivel ')[1]) || 1;
+        console.log('Nivel actual:', level);
+        
+        // Respuestas correctas para cada nivel
+        const correctAnswers = {
+            1: ['2x', 'f\'(x)=2x', 'f\'(x) = 2x'],
+            2: ['(3x^2 + 2)(x^2 - 1) - (x^3 + 2x)(2x)/(x^2 - 1)^2'],
+            3: ['(4x^3 + 6x)(x^3 - x) - (x^4 + 3x^2)(3x^2 - 1)/(x^3 - x)^2'],
+            4: ['3(x^2 + 1)^2 * 2x * (x^3 - 2x) + (x^2 + 1)^3 * (3x^2 - 2)'],
+            5: ['2(x^3 - x)(3x^2 - 1)(x^2 + 2x) + (x^3 - x)^2(2x + 2)']
+        };
         
         // Normalizar la respuesta del usuario y las respuestas correctas
         const normalizedAnswer = answer.replace(/\s+/g, '').toLowerCase();
-        const isCorrect = correctAnswers[exerciseNumber].some(correctAns => 
+        const isCorrect = correctAnswers[level].some(correctAns => 
             correctAns.replace(/\s+/g, '').toLowerCase() === normalizedAnswer
         );
+        
+        console.log('¿Es correcta la respuesta?', isCorrect);
         
         if (isCorrect) {
             showSuccess('¡Correcto!');
             solution.style.display = 'block';
             
-            // Esperar un momento antes de mostrar el siguiente ejercicio
+            // Esperar un momento antes de mostrar el siguiente nivel
             setTimeout(() => {
-                const exercisesContainer = document.querySelector('.exercises');
-                const nextExerciseNumber = parseInt(exerciseNumber) + 1;
-                
-                // Si no hay más ejercicios, mostrar mensaje de finalización
-                if (!correctAnswers[nextExerciseNumber]) {
+                const nextLevel = level + 1;
+                if (nextLevel > 5) {
                     const completionMessage = document.createElement('div');
                     completionMessage.className = 'completion-message';
                     completionMessage.innerHTML = `
                         <h3>¡Felicitaciones!</h3>
-                        <p>Has completado todos los ejercicios de derivadas.</p>
-                        <button onclick="resetExercises()" class="btn-primary">Comenzar de nuevo</button>
+                        <p>Has completado todos los niveles de derivadas.</p>
+                        <button onclick="resetExercise()" class="btn-primary">Comenzar de nuevo</button>
                     `;
-                    exercisesContainer.innerHTML = '';
-                    exercisesContainer.appendChild(completionMessage);
+                    currentExercise.replaceWith(completionMessage);
                     return;
                 }
 
-                // Crear el siguiente ejercicio
-                const nextExercise = document.createElement('div');
-                nextExercise.className = 'exercise';
-                nextExercise.innerHTML = `
-                    <p>${nextExerciseNumber}. Deriva la función: $f(x) = ${getExerciseFunction(nextExerciseNumber)}</p>
-                    <div class="input-group">
-                        <input type="text" class="exercise-input" placeholder="Escribe tu respuesta">
-                    </div>
-                    <div class="attempts-counter">
-                        Intentos restantes: <span id="attemptsCount">3</span>
-                    </div>
-                    <div class="virtual-keyboard">
-                        <div class="keyboard-row">
-                            <button class="key">7</button>
-                            <button class="key">8</button>
-                            <button class="key">9</button>
-                            <button class="key">/</button>
-                            <button class="key">(</button>
-                            <button class="key">)</button>
-                            <button class="key">'</button>
-                        </div>
-                        <div class="keyboard-row">
-                            <button class="key">4</button>
-                            <button class="key">5</button>
-                            <button class="key">6</button>
-                            <button class="key">*</button>
-                            <button class="key">x</button>
-                            <button class="key">^</button>
-                            <button class="key">√</button>
-                        </div>
-                        <div class="keyboard-row">
-                            <button class="key">1</button>
-                            <button class="key">2</button>
-                            <button class="key">3</button>
-                            <button class="key">-</button>
-                            <button class="key">+</button>
-                            <button class="key">.</button>
-                        </div>
-                        <div class="keyboard-row">
-                            <button class="key">0</button>
-                            <button class="key">C</button>
-                            <button class="key">←</button>
-                            <button class="key">=</button>
-                        </div>
-                    </div>
-                    <button class="check-answer">Verificar Respuesta</button>
-                    <div class="exercise-solution" style="display: none;">
-                        <p>La solución es: $f'(x) = ${getExerciseSolution(nextExerciseNumber)}$</p>
-                    </div>
-                `;
-                
-                // Reemplazar el ejercicio actual con el siguiente
-                currentExercise.replaceWith(nextExercise);
-                
-                // Forzar a MathJax a reprocesar el contenido nuevo
-                if (window.MathJax) {
-                    MathJax.typesetPromise([nextExercise]).catch((err) => console.log('Error al procesar MathJax:', err));
-                }
-                
-                // Reiniciar el contador de intentos
-                attempts = MAX_ATTEMPTS;
-                updateAttemptsCounter();
-                
-                // Agregar el evento de verificación al nuevo botón
-                const newCheckButton = nextExercise.querySelector('.check-answer');
-                newCheckButton.addEventListener('click', checkAnswer);
-                
-                // Agregar eventos a las teclas del nuevo teclado virtual
-                const newKeyboard = nextExercise.querySelector('.virtual-keyboard');
-                newKeyboard.querySelectorAll('.key').forEach(key => {
-                    key.addEventListener('click', () => {
-                        const newInput = nextExercise.querySelector('.exercise-input');
-                        if (key.textContent === 'C') {
-                            newInput.value = '';
-                        } else if (key.textContent === '←') {
-                            newInput.value = newInput.value.slice(0, -1);
-                        } else if (key.textContent === '=') {
-                            checkAnswer();
-                        } else {
-                            newInput.value += key.textContent;
-                        }
-                    });
-                });
+                createNewExercise(nextLevel);
             }, 1500);
         } else {
             attempts--;
             updateAttemptsCounter();
             if (attempts <= 0) {
-                // En lugar de mostrar mensaje de sin intentos, mostrar un nuevo ejercicio
-                const exercisesContainer = document.querySelector('.exercises');
-                const newExercise = createNewExercise();
-                currentExercise.replaceWith(newExercise);
-                attempts = MAX_ATTEMPTS;
-                updateAttemptsCounter();
+                showNoAttemptsMessage();
+                createNewExercise(level);
             } else {
                 showError('Incorrecto. Intenta de nuevo.');
             }
         }
     }
 
-    // Función para obtener la función a derivar según el número de ejercicio
-    function getExerciseFunction(exerciseNumber) {
+    // Función para mostrar mensaje de sin intentos
+    function showNoAttemptsMessage() {
+        const message = "Parece que te quedaste sin intentos, ¿comenzamos de nuevo?";
+        if (confirm(message)) {
+            resetExercise();
+        }
+    }
+
+    // Función para obtener la función a derivar según el nivel
+    function getExerciseFunction(level) {
         const functions = {
-            1: 'x^6 + 4x^4 + 4x^2', // Regla de potencias
-            2: 'x√x', // Regla de potencias con raíz
-            3: 'x^2 + 3x + 1', // Regla de potencias y suma
-            4: 'x^3 - x^2 + x', // Regla de potencias y resta
-            5: 'x^4 + 2x^3 - x^2', // Regla de potencias y operaciones combinadas
-            6: 'x^5 - x^3 + 2x', // Regla de potencias y operaciones combinadas
-            7: 'x^2 + x + 1', // Regla de potencias y suma
-            8: 'x^3 + x^2 - x', // Regla de potencias y resta
-            9: '(x^2 + 1)(x^3 - 2x)', // Regla del producto
-            10: '(x^3 - x)(x^2 + 2)', // Regla del producto
-            11: '(x^2 + 3x)(x^4 - 2)', // Regla del producto
-            12: '(x^5 + 2)(x^3 - x)', // Regla del producto
-            13: '(x^2 + 1)^3', // Regla de la cadena
-            14: '(x^3 - 2)^2', // Regla de la cadena
-            15: '(x^4 + 3)^2', // Regla de la cadena
-            16: '(x^2 - 1)^4' // Regla de la cadena
+            1: 'x^2', // Nivel 1: Primera derivada simple
+            2: '(x^3 + 2x)/(x^2 - 1)', // Nivel 2: Regla del cociente
+            3: '(x^4 + 3x^2)/(x^3 - x)', // Nivel 3: Regla del cociente más compleja
+            4: '(x^2 + 1)^3 * (x^3 - 2x)', // Nivel 4: Regla del producto y cadena
+            5: '(x^3 - x)^2 * (x^2 + 2x)', // Nivel 5: Regla del producto y cadena
+            6: '(x^4 + x^2)/(x^3 - 2x) * (x^2 + 1)', // Nivel 6: Combinación de cociente y producto
+            7: '((x^2 + 1)^3)/(x^2 - 4)', // Nivel 7: Cociente con regla de la cadena
+            8: '(x^3 + 2x) * (x^2 - 1)^3', // Nivel 8: Producto con regla de la cadena
+            9: '((x^2 + 2x)^3)/(x^3 - x) * (x^2 + 1)', // Nivel 9: Combinación de todas las reglas
+            10: '((x^3 + 1)^2 * (x^2 - x))/(x^2 + 2)' // Nivel 10: Combinación compleja de todas las reglas
         };
-        return functions[exerciseNumber] || 'x^2';
+        return functions[level] || 'x^2';
     }
 
-    // Función para obtener la solución según el número de ejercicio
-    function getExerciseSolution(exerciseNumber) {
+    // Función para obtener la solución según el nivel
+    function getExerciseSolution(level) {
         const solutions = {
-            1: '6x^5 + 16x^3 + 8x',
-            2: '\\frac{3}{2}\\sqrt{x}',
-            3: '2x + 3',
-            4: '3x^2 - 2x + 1',
-            5: '4x^3 + 6x^2 - 2x',
-            6: '5x^4 - 3x^2 + 2',
-            7: '2x + 1',
-            8: '3x^2 + 2x - 1',
-            9: '5x^4 - 4x^2 + 3x^2 - 2', // Regla del producto
-            10: '5x^4 + 6x^3 - 3x^2 - 2x', // Regla del producto
-            11: '6x^5 + 12x^4 + 3x^3 - 6x', // Regla del producto
-            12: '8x^7 - 3x^5 + 6x^3 - 2x', // Regla del producto
-            13: '6x(x^2 + 1)^2', // Regla de la cadena
-            14: '6x^2(x^3 - 2)', // Regla de la cadena
-            15: '8x^3(x^4 + 3)', // Regla de la cadena
-            16: '8x(x^2 - 1)^3' // Regla de la cadena
+            1: '2x', // Primera derivada simple
+            2: '(3x^2 + 2)(x^2 - 1) - (x^3 + 2x)(2x)/(x^2 - 1)^2', // Regla del cociente
+            3: '(4x^3 + 6x)(x^3 - x) - (x^4 + 3x^2)(3x^2 - 1)/(x^3 - x)^2', // Regla del cociente más compleja
+            4: '3(x^2 + 1)^2 * 2x * (x^3 - 2x) + (x^2 + 1)^3 * (3x^2 - 2)', // Regla del producto y cadena
+            5: '2(x^3 - x)(3x^2 - 1)(x^2 + 2x) + (x^3 - x)^2(2x + 2)', // Regla del producto y cadena
+            6: '((4x^3 + 2x)(x^3 - 2x) - (x^4 + x^2)(3x^2 - 2))/(x^3 - 2x)^2 * (x^2 + 1) + (x^4 + x^2)/(x^3 - 2x) * 2x', // Combinación de cociente y producto
+            7: '3(x^2 + 1)^2 * 2x * (x^2 - 4) - ((x^2 + 1)^3) * 2x/(x^2 - 4)^2', // Cociente con regla de la cadena
+            8: '(3x^2 + 2)(x^2 - 1)^3 + (x^3 + 2x) * 3(x^2 - 1)^2 * 2x', // Producto con regla de la cadena
+            9: '(3(x^2 + 2x)^2(2x + 2)(x^3 - x) - (x^2 + 2x)^3(3x^2 - 1))/(x^3 - x)^2 * (x^2 + 1) + ((x^2 + 2x)^3)/(x^3 - x) * 2x', // Combinación de todas las reglas
+            10: '((2(x^3 + 1)(3x^2)(x^2 - x) + (x^3 + 1)^2(2x - 1))(x^2 + 2) - (x^3 + 1)^2(x^2 - x)(2x))/(x^2 + 2)^2' // Combinación compleja de todas las reglas
         };
-        return solutions[exerciseNumber] || '2x';
+        return solutions[level] || '2x';
     }
 
-    // Función para crear un nuevo ejercicio aleatorio
-    function createNewExercise() {
-        const exerciseNumber = Math.floor(Math.random() * 16) + 1; // Cambiado de 8 a 16
+    // Función para crear un nuevo ejercicio
+    function createNewExercise(level = 1) {
+        console.log('Creando nuevo ejercicio para nivel:', level);
+        attempts = MAX_ATTEMPTS; // Reiniciar intentos al crear nuevo ejercicio
+        
+        const exerciseContainer = document.querySelector('.exercise-container');
+        if (!exerciseContainer) {
+            console.error('No se encontró el contenedor de ejercicios');
+            return null;
+        }
+
+        // Crear el nuevo ejercicio
         const newExercise = document.createElement('div');
         newExercise.className = 'exercise';
         newExercise.innerHTML = `
-            <p>Nuevo ejercicio. Deriva la función: $f(x) = ${getExerciseFunction(exerciseNumber)}</p>
+            <p>Nivel ${level}. Deriva la función: \[f(x) = ${getExerciseFunction(level)}\]</p>
             <div class="input-group">
                 <input type="text" class="exercise-input" placeholder="Escribe tu respuesta">
             </div>
             <div class="attempts-counter">
-                Intentos restantes: <span id="attemptsCount">3</span>
+                Intentos restantes: <span id="attemptsCount">${MAX_ATTEMPTS}</span>
             </div>
             <div class="virtual-keyboard">
                 <div class="keyboard-row">
-                    <button class="key">7</button>
-                    <button class="key">8</button>
-                    <button class="key">9</button>
-                    <button class="key">/</button>
-                    <button class="key">(</button>
-                    <button class="key">)</button>
-                    <button class="key">'</button>
+                    <button type="button" class="key" data-value="7">7</button>
+                    <button type="button" class="key" data-value="8">8</button>
+                    <button type="button" class="key" data-value="9">9</button>
+                    <button type="button" class="key" data-value="/">/</button>
+                    <button type="button" class="key" data-value="(">(</button>
+                    <button type="button" class="key" data-value=")">)</button>
+                    <button type="button" class="key" data-value="'">'</button>
                 </div>
                 <div class="keyboard-row">
-                    <button class="key">4</button>
-                    <button class="key">5</button>
-                    <button class="key">6</button>
-                    <button class="key">*</button>
-                    <button class="key">x</button>
-                    <button class="key">^</button>
-                    <button class="key">√</button>
+                    <button type="button" class="key" data-value="4">4</button>
+                    <button type="button" class="key" data-value="5">5</button>
+                    <button type="button" class="key" data-value="6">6</button>
+                    <button type="button" class="key" data-value="*">*</button>
+                    <button type="button" class="key" data-value="x">x</button>
+                    <button type="button" class="key" data-value="^">^</button>
+                    <button type="button" class="key" data-value="√">√</button>
                 </div>
                 <div class="keyboard-row">
-                    <button class="key">1</button>
-                    <button class="key">2</button>
-                    <button class="key">3</button>
-                    <button class="key">-</button>
-                    <button class="key">+</button>
-                    <button class="key">.</button>
+                    <button type="button" class="key" data-value="1">1</button>
+                    <button type="button" class="key" data-value="2">2</button>
+                    <button type="button" class="key" data-value="3">3</button>
+                    <button type="button" class="key" data-value="-">-</button>
+                    <button type="button" class="key" data-value="+">+</button>
+                    <button type="button" class="key" data-value=".">.</button>
                 </div>
                 <div class="keyboard-row">
-                    <button class="key">0</button>
-                    <button class="key">C</button>
-                    <button class="key">←</button>
-                    <button class="key">=</button>
+                    <button type="button" class="key" data-value="0">0</button>
+                    <button type="button" class="key" data-value="C">C</button>
+                    <button type="button" class="key" data-value="←">←</button>
+                    <button type="button" class="key" data-value="=">=</button>
                 </div>
             </div>
-            <button class="check-answer">Verificar Respuesta</button>
+            <button type="button" class="check-answer">Verificar Respuesta</button>
             <div class="exercise-solution" style="display: none;">
-                <p>La solución es: $f'(x) = ${getExerciseSolution(exerciseNumber)}$</p>
+                <p>La solución es: \[f'(x) = ${getExerciseSolution(level)}\]</p>
             </div>
         `;
 
-        // Agregar eventos
-        const checkButton = newExercise.querySelector('.check-answer');
-        checkButton.addEventListener('click', checkAnswer);
+        // Limpiar el contenedor antes de agregar el nuevo ejercicio
+        exerciseContainer.innerHTML = '';
+        exerciseContainer.appendChild(newExercise);
 
-        const keyboard = newExercise.querySelector('.virtual-keyboard');
-        keyboard.querySelectorAll('.key').forEach(key => {
-            key.addEventListener('click', () => {
-                const input = newExercise.querySelector('.exercise-input');
-                if (key.textContent === 'C') {
-                    input.value = '';
-                } else if (key.textContent === '←') {
-                    input.value = input.value.slice(0, -1);
-                } else if (key.textContent === '=') {
-                    checkAnswer();
-                } else {
-                    input.value += key.textContent;
+        // Procesar MathJax
+        if (window.MathJax) {
+            MathJax.typesetPromise([newExercise]).catch((err) => console.log('Error al procesar MathJax:', err));
+        }
+
+        console.log('Inicializando eventos para el nuevo ejercicio...');
+        
+        // Configurar eventos del teclado virtual
+        const keys = newExercise.querySelectorAll('.key');
+        const input = newExercise.querySelector('.exercise-input');
+        const checkButton = newExercise.querySelector('.check-answer');
+
+        console.log('Elementos encontrados:', {
+            keysCount: keys.length,
+            hasInput: !!input,
+            hasCheckButton: !!checkButton
+        });
+
+        // Configurar eventos para cada tecla
+        keys.forEach(key => {
+            key.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const value = this.getAttribute('data-value');
+                console.log('Tecla presionada:', value);
+                
+                if (!input) {
+                    console.error('No se encontró el campo de entrada');
+                    return;
                 }
+
+                switch(value) {
+                    case 'C':
+                        input.value = '';
+                        break;
+                    case '←':
+                        input.value = input.value.slice(0, -1);
+                        break;
+                    case '=':
+                        checkAnswer();
+                        break;
+                    default:
+                        input.value += value;
+                }
+                
+                input.focus();
             });
         });
 
+        // Configurar evento del botón de verificar
+        if (checkButton) {
+            checkButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Botón de verificar clickeado');
+                checkAnswer();
+            });
+        }
+
+        updateAttemptsCounter();
         return newExercise;
     }
-
-    // Función global para reiniciar los ejercicios
-    window.resetExercises = function() {
-        const exercisesContainer = document.querySelector('.exercises');
-        exercisesContainer.innerHTML = '';
-        
-        // Crear el primer ejercicio
-        const firstExercise = createNewExercise();
-        exercisesContainer.appendChild(firstExercise);
-        
-        // Reiniciar el contador de intentos
-        attempts = MAX_ATTEMPTS;
-        updateAttemptsCounter();
-    };
 
     // Funciones para la navegación de pasos
     function initializeStepNavigation() {
@@ -847,6 +792,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Inicializar la navegación de pasos cuando el DOM esté listo
     document.addEventListener('DOMContentLoaded', () => {
+        console.log('DOM cargado, inicializando...');
         initializeStepNavigation();
+        
+        // Crear el primer ejercicio si estamos en la página de práctica
+        const exerciseContainer = document.querySelector('.exercise-container');
+        if (exerciseContainer) {
+            console.log('Creando primer ejercicio...');
+            const firstExercise = createNewExercise();
+            exerciseContainer.appendChild(firstExercise);
+            attempts = MAX_ATTEMPTS;
+            updateAttemptsCounter();
+            
+            // Inicializar eventos después de crear el primer ejercicio
+            initializeKeyboardEvents();
+            initializeCheckButtons();
+        }
     });
 });
